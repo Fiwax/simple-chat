@@ -1,6 +1,5 @@
 import express from 'express'
 import path from 'path'
-import axios from 'axios'
 import cors from 'cors'
 import bodyParser from 'body-parser'
 import sockjs from 'sockjs'
@@ -11,8 +10,6 @@ import cookieParser from 'cookie-parser'
 import config from './config'
 import Html from '../client/html'
 
-
-const { readFile, writeFile, unlink } = require('fs').promises
 
 
 const Root = () => ''
@@ -52,72 +49,6 @@ const middleware = [
 ]
 
 middleware.forEach((it) => server.use(it))
-
-// get /api/v1/users - получает всех юзеров из файла users.json, если его нет - получает данные с сервиса https://jsonplaceholder.typicode.com/users,
-// заполняет файл users.json полученными данными и возвращает эти данные пользователю
-
-server.get('/api/v1/users', async (req, res) => {
-  readFile(`${__dirname}/users.json`, { encoding: 'utf8'})
-   .then((data) => res.json(JSON.parse(data)))
-   .catch(async () => {
-     const { data: users } = await axios(`https://jsonplaceholder.typicode.com/users`)
-     writeFile(`${__dirname}/users.json`, JSON.stringify(users), { encoding: 'utf8'})
-     return users
-   })
-})
-
-
-// post /api/v1/users - добавляет юзера в файл users.json, с id равным id последнего элемента + 1
-// и возвращает { status: 'success', id: id }
-
-server.post('/api/v1/users', (req, res) => {
-  readFile(`${__dirname}/users.json`, { encoding: 'utf8'})
-  .then((user) => {
-     const users = JSON.parse(user)
-     const newUser = req.body
-     newUser.id = users[users.length - 1].id + 1
-     writeFile(`${__dirname}/users.json`, JSON.stringify([...users, newUser]), { encoding: 'utf8'})
-    res.json({ status: 'success', id: newUser.id })
-  })
-})
-
-// patch /api/v1/users/:userId - получает новый объект, дополняет его полями юзера в users.json, с id равным userId,
-//  и возвращает { status: 'success', id: userId }
-
-server.patch('/api/v1/users/:userId', (req, res) => {
-  readFile(`${__dirname}/users.json`, { encoding: 'utf8'})
-   .then((user) => {
-     const users = JSON.parse(user)
-     const { userId } = req.params
-     const data = req.body
-     const users2 = users.find((user) => user.id === +userId)
-     const users3 = {...users2, ...data}
-     const users4 = users.map((rec) => rec.id === users3.id ? users3 : rec)
-     writeFile(`${__dirname}/users.json`, JSON.stringify(users4), { encoding: 'utf8'})
-     res.json({ status: 'success', id: userId})
-   })
-})
-
-// delete /api/v1/users/:userId - удаляет юзера в users.json, с id равным userId, и возвращает { status: 'success', id: userId }
-
-server.delete('/api/v1/users/:userId', (req, res) => {
-  readFile(`${__dirname}/users.json`, { encoding: 'utf8'})
-   .then((user) => {
-    const users = JSON.parse(user)
-    const { userId } = req.params
-    const updateUser =  users.filter((user) => user.id !== +userId)
-    writeFile(`${__dirname}/users.json`, JSON.stringify(updateUser), { encoding: 'utf8'})
-    res.json({ status: 'success', id: userId })
-   })
-})
-
-// delete /api/v1/users - удаляет файл users.json
-
-server.delete('api/v1/users', (req, res) => {
- unlink(`${__dirname}/users.json`)
- res.json({ status: 'success'})
-})
-
 
 server.use('/api/', (req, res) => {
   res.status(404)
