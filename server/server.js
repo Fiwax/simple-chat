@@ -1,12 +1,14 @@
 import express from 'express'
 import path from 'path'
 import cors from 'cors'
+import http from 'http'
 import bodyParser from 'body-parser'
-import sockjs from 'sockjs'
+ // import sockjs from 'sockjs'
 import { renderToStaticNodeStream } from 'react-dom/server'
 import React from 'react'
 
 import cookieParser from 'cookie-parser'
+import io from 'socket.io'
 import config from './config'
 import Html from '../client/html'
 
@@ -32,6 +34,23 @@ let connections = []
 
 const port = process.env.PORT || 8090
 const server = express()
+const httpServer = http.createServer(server)
+
+const SocketIO = io(httpServer, {
+  path: '/ws'
+})
+
+if (config.isSocketsEnabled || true) {
+  SocketIO.on('connection', (socket) => {
+    connections.push(socket.id)
+    console.log('a user connected', socket.id)
+    socket.on('disconnect', () => {
+      connections = connections.filter((c) => c !== socket.id)
+      console.log('a user disconnected', socket.id)
+    })
+  })
+}
+
 
 const headers = (req, res, next) => {
   res.set('x-skillcrucial-user', '7e6c249a-9f98-4872-a8aa-a158a2515083');
@@ -49,6 +68,10 @@ const middleware = [
 ]
 
 middleware.forEach((it) => server.use(it))
+
+server.get('/api/v1/sockets', (req, res) => {
+  res.json(connections)
+})
 
 server.use('/api/', (req, res) => {
   res.status(404)
@@ -83,18 +106,20 @@ server.get('/*', (req, res) => {
   )
 })
 
-const app = server.listen(port)
+// const app = server.listen(port)
 
-if (config.isSocketsEnabled) {
-  const echo = sockjs.createServer()
-  echo.on('connection', (conn) => {
-    connections.push(conn)
-    conn.on('data', async () => { })
+// if (config.isSocketsEnabled) {
+//   const echo = sockjs.createServer()
+//   echo.on('connection', (conn) => {
+//     connections.push(conn)
+//     conn.on('data', async () => { })
 
-    conn.on('close', () => {
-      connections = connections.filter((c) => c.readyState !== 3)
-    })
-  })
-  echo.installHandlers(app, { prefix: '/ws' })
-}
+//     conn.on('close', () => {
+//       connections = connections.filter((c) => c.readyState !== 3)
+//     })
+//   })
+//   echo.installHandlers(app, { prefix: '/ws' })
+// }
 console.log(`Serving at http://localhost:${port}`)
+
+httpServer.listen(port)
