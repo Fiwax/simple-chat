@@ -22,6 +22,12 @@ const AddChannel = (props) => {
     dispatch(getDescription(''))
   }
 
+  const handleChange = (e) => {
+    if (e.target.value.length <= 20) {
+      dispatch(getChannelName(e.target.value))
+    }
+  }
+
   return (
     <div className="modal h-screen w-screen flex justify-center items-center bg-black bg-opacity-75 fixed top-0 left-0 ">
       <div className="modal__content bg-white rounded h-40 w-80 text-black flex flex-col justify-center items-center">
@@ -31,7 +37,7 @@ const AddChannel = (props) => {
             className="bg-gray-200 rounded border-2 h-7 w-11/12 px-2 focus:ring-2 focus:ring-purple-500 focus:outline-none focus:bg-white"
             placeholder="Name"
             value={channelName}
-            onChange={(e) => dispatch(getChannelName(e.target.value))}
+            onChange={handleChange}
           />
         </div>
         <div className="m-2">

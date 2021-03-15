@@ -11,13 +11,13 @@ const Header = () => {
     <div className="border-b flex px-6 py-2 items-center shadow rounded-b-md">
       <div className="flex flex-col">
         <span className="text-grey-700 text-md mb-1 font-extrabold">#{name}</span>
-        <span className="text-grey-500 font-thin text-sm">{description}</span>
+        <span className="text-grey-500 font-extralight text-sm">{description}</span>
       </div>
       <div className="ml-auto hidden md:block">
         <input
           type="search"
           placeholder="Search"
-          className="border border-gray-500 rounded-lg p-2"
+          className="border border-gray-300 rounded-lg bg-gray-200 focus:bg-white focus:outline-none p-1"
         />
       </div>
     </div>

@@ -3,16 +3,17 @@ import path from 'path'
 import cors from 'cors'
 import http from 'http'
 import bodyParser from 'body-parser'
- // import sockjs from 'sockjs'
 import { renderToStaticNodeStream } from 'react-dom/server'
 import React from 'react'
-
 import cookieParser from 'cookie-parser'
+import passport from 'passport'
+import jwt from 'jsonwebtoken'
 import io from 'socket.io'
+import mongooseService from './services/mongoose'
+import passportJWT from './services/passport'
 import config from './config'
+import User from './model/User.model'
 import Html from '../client/html'
-
-
 
 const Root = () => ''
 
@@ -30,36 +31,36 @@ try {
   console.log(' run yarn build:prod to enable ssr')
 }
 
+mongooseService.connect()
+
 let connections = []
+
+// let channelList = []
+
+let channelList = [
+  {
+    general: {
+      name: 'general',
+      description: 'Chat about general topics',
+      listOfUsers: [],
+      listOfMessages: []
+    }
+  }
+]
 
 const port = process.env.PORT || 8090
 const server = express()
 const httpServer = http.createServer(server)
 
-const SocketIO = io(httpServer, {
-  path: '/ws'
-})
-
-if (config.isSocketsEnabled || true) {
-  SocketIO.on('connection', (socket) => {
-    connections.push(socket.id)
-    console.log('a user connected', socket.id)
-    socket.on('disconnect', () => {
-      connections = connections.filter((c) => c !== socket.id)
-      console.log('a user disconnected', socket.id)
-    })
-  })
-}
-
-
 const headers = (req, res, next) => {
-  res.set('x-skillcrucial-user', '7e6c249a-9f98-4872-a8aa-a158a2515083');
+  res.set('x-skillcrucial-user', '7e6c249a-9f98-4872-a8aa-a158a2515083')
   res.set('Access-Control-Expose-Headers', 'X-SKILLCRUCIAL-USER')
   next()
 }
 
 const middleware = [
   cors(),
+  passport.initialize(),
   express.static(path.resolve(__dirname, '../dist/assets')),
   bodyParser.urlencoded({ limit: '50mb', extended: true, parameterLimit: 50000 }),
   bodyParser.json({ limit: '50mb', extended: true }),
@@ -67,10 +68,41 @@ const middleware = [
   headers
 ]
 
+passport.use('jwt', passportJWT.jwt)
+
 middleware.forEach((it) => server.use(it))
 
-server.get('/api/v1/sockets', (req, res) => {
-  res.json(connections)
+server.get('/api/v1/auth', async (req, res) => {
+  try {
+    const jwtUser = jwt.verify(req.cookies.token, config.secret)
+    const user = await User.findById(jwtUser.uid)
+
+    const payload = { uid: user.id }
+    const token = jwt.sign(payload, config.secret, { expiresIn: '48h' })
+    user.password = undefined
+    res.cookie('token', token, { maxAge: 1000 * 60 * 60 * 48 })
+    res.json({ status: 'ok', token, user })
+  } catch (err) {
+    console.log(err)
+    res.json({ status: 'error', err })
+  }
+})
+
+server.post('/api/v1/auth', async (req, res) => {
+  console.log(req.body)
+  try {
+    const user = await User.findAndValidateUser(req.body)
+
+    const payload = { uid: user.id }
+    const token = jwt.sign(payload, config.secret, { expiresIn: '48h' })
+    user.password = undefined // delete doesnot work
+    console.log(user.password)
+    res.cookie('token', token, { maxAge: 1000 * 60 * 60 * 48 })
+    res.json({ status: 'ok', token, user })
+  } catch (err) {
+    console.log(err)
+    res.json({ status: 'error', err })
+  }
 })
 
 server.use('/api/', (req, res) => {
@@ -106,20 +138,38 @@ server.get('/*', (req, res) => {
   )
 })
 
-// const app = server.listen(port)
+if (config.isSocketsEnabled) {
+  const SocketIO = io(httpServer, {
+    path: '/ws'
+  })
 
-// if (config.isSocketsEnabled) {
-//   const echo = sockjs.createServer()
-//   echo.on('connection', (conn) => {
-//     connections.push(conn)
-//     conn.on('data', async () => { })
+  SocketIO.on('connection', (socket) => {
+    connections.push(socket)
+    console.log('a user connected', socket.id)
 
-//     conn.on('close', () => {
-//       connections = connections.filter((c) => c.readyState !== 3)
-//     })
-//   })
-//   echo.installHandlers(app, { prefix: '/ws' })
-// }
-console.log(`Serving at http://localhost:${port}`)
+    connections.forEach((soc) => {
+      soc.emit('Get-Chat-Data', channelList)
+    })
 
-httpServer.listen(port)
+    socket.on('Add-Channel', (channel) => {
+      // channelList = [...channel]
+      channelList = channel
+      SocketIO.emit('Get-Channels', channelList)
+    })
+
+    socket.on('Send-Message', (listMsg) => {
+    // channelList = [...listMsg]
+       channelList = listMsg
+      SocketIO.emit('Get-Messages', channelList)
+    })
+
+    socket.on('disconnect', () => {
+      connections = connections.filter((c) => c !== socket.id)
+      console.log('a user disconnected', socket.id)
+    })
+  })
+}
+
+httpServer.listen(port, () => {
+  console.log(`Serving at http://localhost:${port}`)
+})

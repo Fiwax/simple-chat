@@ -1,22 +1,34 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React from 'react'
 import PropTypes from 'prop-types'
-import { Provider } from 'react-redux'
+import { Provider, useSelector } from 'react-redux'
 import { ConnectedRouter } from 'connected-react-router'
 import { Switch, Route, Redirect, StaticRouter } from 'react-router-dom'
 
 import store, { history } from '../redux'
 
 import Home from '../components/home'
-import DummyView from '../components/dummy-view'
+import Private from '../components/private-route'
 import NotFound from '../components/404'
+import LoginForm from '../components/login'
 
 import Startup from './startup'
 
+// const OnlyAnonymousRoute = ({ component: Component, ...rest }) => {
+//   const func = (props) =>
+//     !!rest.user && !!rest.user.name && !!rest.token ? (
+//       <Redirect to={{ pathname: '/private' }} />
+//     ) : (
+//       <Component {...props} />
+//     )
+//   return <Route {...rest} render={func} />
+// }
+
 const OnlyAnonymousRoute = ({ component: Component, ...rest }) => {
+  const auth = useSelector((s) => s.auth)
   const func = (props) =>
-    !!rest.user && !!rest.user.name && !!rest.token ? (
-      <Redirect to={{ pathname: '/' }} />
+    !!auth.user && !!auth.token ? (
+      <Redirect to={{ pathname: '/home' }} />
     ) : (
       <Component {...props} />
     )
@@ -24,8 +36,9 @@ const OnlyAnonymousRoute = ({ component: Component, ...rest }) => {
 }
 
 const PrivateRoute = ({ component: Component, ...rest }) => {
+  const auth = useSelector((s) => s.auth)
   const func = (props) =>
-    !!rest.user && !!rest.user.name && !!rest.token ? (
+    !!auth.user && !!auth.token ? (
       <Component {...props} />
     ) : (
       <Redirect
@@ -72,10 +85,10 @@ const RootComponent = (props) => {
       <RouterSelector history={history} location={props.location} context={props.context}>
         <Startup>
           <Switch>
-            <Route exact path="/" component={() => <DummyView />} />
-            <Route exact path="/home" component={() => <DummyView /> } />
-            <Route exact path="/login" component={() => <Home />} />
-            <PrivateRoute exact path="/hidden-route" component={() => <DummyView />} />
+            <Route exact path="/" component={() => <LoginForm />} />
+            <OnlyAnonymousRoute exact path="/login" component={() => <LoginForm />} />
+            <PrivateRoute exact path="/home" component={() => <Home />} />
+            <PrivateRoute exact path="/private" component={() => <Private />} />
             <Route component={() => <NotFound />} />
           </Switch>
         </Startup>

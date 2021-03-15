@@ -23,18 +23,18 @@ const InputMessage = () => {
   }
 
   return (
-    <div className="bg-white rounded-t-lg border-2 ">
-      <div className="flex m-6 rounded-lg mb-4 overflow-hidden">
+    <div className="w-full">
+      <div className="flex ml-2 mr-2 rounded-lg mb-4 overflow-hidden">
         <button
           type="button"
-          className="text-3xl text-white px-3 bg-purple-600 hover:bg-purple-400 pb-1"
+          className="text-3xl pb-0.5 text-white px-3 bg-purple-600 hover:bg-purple-400 "
           onClick={onClick}
         >
           +
         </button>
         <input
           type="text"
-          className="w-full px-4 border-2 bg-gray-200 focus:bg-white"
+          className="w-full px-4 border-2 bg-gray-200 focus:bg-white focus:outline-none"
           placeholder={`Message to #${activeChannel}`}
           value={text}
           onChange={(e) => dispatch(getMessage(e.target.value))}

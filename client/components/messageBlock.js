@@ -1,6 +1,6 @@
 import React from 'react'
 
-const MessageBlock = (props) => {
+const MessageBlock = ({ message }) => {
   return (
     <div className="flex items-start mb-4">
       <img
@@ -10,10 +10,10 @@ const MessageBlock = (props) => {
       />
       <div className="flex flex-col">
         <div className="flex items-end ">
-          <span className="font-bold text-md mr-2 font-sans">{props.name}</span>
-          <span className="text-gray-600 text-xs font-light py-0.5">{props.time}</span>
+          <span className="font-bold text-md mr-2 font-sans">{message.name}</span>
+          <span className="text-gray-600 text-xs font-light py-0.5">{message.time}</span>
         </div>
-        <p className="font-light text-md text-gray-900 pt-0.5">{props.message}</p>
+        <p className="font-light text-md text-gray-900 pt-0.5">{message.text}</p>
       </div>
     </div>
   )
