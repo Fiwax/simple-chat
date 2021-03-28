@@ -9,9 +9,13 @@ const userSchema = new mongoose.Schema(
       unique: true
     },
     full_name: {
-    type: String,
-    required: true,
-    unique: true
+      type: String,
+      required: true,
+      unique: true
+    },
+    userPic: {
+      type: String,
+      default: 'https://chdi.ru/wp-content/uploads/default-user-image.png'
     },
     role: {
       type: [String],

@@ -8,30 +8,20 @@ import { Switch, Route, Redirect, StaticRouter } from 'react-router-dom'
 import store, { history } from '../redux'
 
 import Home from '../components/home'
-import Private from '../components/private-route'
 import NotFound from '../components/404'
-import LoginForm from '../components/login'
+import LoginPage from '../components/loginPage'
+import RegisterPage from '../components/registerPage'
+import Admin from '../components/admin'
+
 
 import Startup from './startup'
+import Dummy from '../components/dummy'
 
-// const OnlyAnonymousRoute = ({ component: Component, ...rest }) => {
-//   const func = (props) =>
-//     !!rest.user && !!rest.user.name && !!rest.token ? (
-//       <Redirect to={{ pathname: '/private' }} />
-//     ) : (
-//       <Component {...props} />
-//     )
-//   return <Route {...rest} render={func} />
-// }
 
 const OnlyAnonymousRoute = ({ component: Component, ...rest }) => {
   const auth = useSelector((s) => s.auth)
   const func = (props) =>
-    !!auth.user && !!auth.token ? (
-      <Redirect to={{ pathname: '/home' }} />
-    ) : (
-      <Component {...props} />
-    )
+    !!auth.user && !!auth.token ? <Redirect to={{ pathname: '/home' }} /> : <Component {...props} />
   return <Route {...rest} render={func} />
 }
 
@@ -85,10 +75,12 @@ const RootComponent = (props) => {
       <RouterSelector history={history} location={props.location} context={props.context}>
         <Startup>
           <Switch>
-            <Route exact path="/" component={() => <LoginForm />} />
-            <OnlyAnonymousRoute exact path="/login" component={() => <LoginForm />} />
+            <Route exact path="/" component={() => <Dummy />} />
+            <OnlyAnonymousRoute exact path="/registration" component={() => <RegisterPage />} />
+            <OnlyAnonymousRoute exact path="/login" component={() => <LoginPage />} />
             <PrivateRoute exact path="/home" component={() => <Home />} />
-            <PrivateRoute exact path="/private" component={() => <Private />} />
+            <PrivateRoute exact path="/home/admin" component={() => <Admin />} />
+            <PrivateRoute exact path="/private" component={() => <Dummy />} />
             <Route component={() => <NotFound />} />
           </Switch>
         </Startup>

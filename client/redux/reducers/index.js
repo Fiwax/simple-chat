@@ -4,6 +4,7 @@ import { connectRouter } from 'connected-react-router'
 import channels from './channels'
 import messages from './messages'
 import auth from './auth'
+import registration from './registration'
 import users from './users'
 
 const createRootReducer = (history) =>
@@ -12,7 +13,8 @@ const createRootReducer = (history) =>
     channels,
     messages,
     auth,
-    users
+    users,
+    registration
   })
 
 export default createRootReducer

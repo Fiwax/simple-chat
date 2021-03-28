@@ -11,7 +11,7 @@ import createHistory from './history'
 
 export const history = createHistory()
 
- const isBrowser = typeof window !== 'undefined'
+//  const isBrowser = typeof window !== 'undefined'
 
 const initialState = {}
 const enhancers = []
@@ -23,16 +23,29 @@ const composedEnhancers = composeFunc(applyMiddleware(...middleware), ...enhance
 
 const store = createStore(rootReducer(history), initialState, composedEnhancers)
 // eslint-disable-next-line
-export const SOCKETIO = io(`${isBrowser ? window.location.origin : 'http://localhost'}/ws`, {
-  path: '/ws'
+export const socket = io(`${window.location.origin}`, {
+  path: '/ws',
+  autoConnect: false,
 })
-// export const SOCKETIO = io(`${isBrowser ? window.location.origin : 'http://localhost'}/ws`, {
-//   path: '/ws'
-// })
 
-// export const SOCKETIO = io(`${window.location.origin}`, {
-//   path: '/ws'
-// })
+// let socket
+// if (typeof ENABLE_SOCKETS !== 'undefined' && ENABLE_SOCKETS) {
+//   const initSocket = () => {
+//     socket = io(
+//       io( `${window.location.origin}`, {
+//         path: '/ws'
+//       })
+//     )
+//   }
+//   console.log('enable', ENABLE_SOCKETS)
+//   initSocket()
+// }
+
+// export function getSocket() {
+//   return socket
+// }
+
+
 
 // let socket
 

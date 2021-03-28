@@ -1,8 +1,6 @@
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { addChannel, getChannelName, getDescription } from '../redux/reducers/channels'
-
-// ({active, setActive})
+import { addChannel, getChannelName, getDescription } from '../../redux/reducers/channels'
 
 const AddChannel = (props) => {
   const channelName = useSelector((s) => s.channels.nameOfChannel)
@@ -29,12 +27,12 @@ const AddChannel = (props) => {
   }
 
   return (
-    <div className="modal h-screen w-screen flex justify-center items-center bg-black bg-opacity-75 fixed top-0 left-0 ">
-      <div className="modal__content bg-white rounded h-40 w-80 text-black flex flex-col justify-center items-center">
-        <span className="text-lg text-gray-400 hover:text-purple-500">Add channel</span>
+    <div className="fixed top-0 left-0 flex items-center justify-center w-screen h-screen bg-black bg-opacity-75 modal">
+      <div className="flex flex-col items-center justify-center h-40 text-black bg-white rounded modal__content w-80">
+        <span className="text-lg text-gray-400 hover:text-gray-500">Add channel</span>
         <div className="">
           <input
-            className="bg-gray-200 rounded border-2 h-7 w-11/12 px-2 focus:ring-2 focus:ring-purple-500 focus:outline-none focus:bg-white"
+            className="w-11/12 px-2 bg-gray-200 border-2 rounded h-7 focus:ring-2 focus:ring-gray-500 focus:outline-none focus:bg-white"
             placeholder="Name"
             value={channelName}
             onChange={handleChange}
@@ -42,7 +40,7 @@ const AddChannel = (props) => {
         </div>
         <div className="m-2">
           <input
-            className="bg-gray-200 h-7 w-11/12 px-2 rounded border-2 focus:ring-2 focus:ring-purple-500 focus:outline-none focus:bg-white"
+            className="w-11/12 px-2 bg-gray-200 border-2 rounded h-7 focus:ring-2 focus:ring-gray-500 focus:outline-none focus:bg-white"
             placeholder="Description"
             value={description}
             onChange={(e) => dispatch(getDescription(e.target.value))}
@@ -51,17 +49,17 @@ const AddChannel = (props) => {
 
         {/* Buttons */}
 
-        <div className="text-white text-base">
+        <div className="text-base text-white">
           <button
             type="button"
-            className="border mr-2 bg-gray-700 rounded w-16 hover:bg-gray-600"
+            className="w-16 mr-2 bg-gray-700 border rounded hover:bg-gray-600"
             onClick={Cancel}
           >
             Cancel
           </button>
           <button
             type="button"
-            className="border ml-2 bg-gray-700 rounded w-16 hover:bg-gray-600"
+            className="w-16 ml-2 bg-gray-700 border rounded hover:bg-gray-600"
             onClick={Add}
           >
             Add

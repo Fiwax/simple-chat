@@ -8,11 +8,14 @@ import React from 'react'
 import cookieParser from 'cookie-parser'
 import passport from 'passport'
 import jwt from 'jsonwebtoken'
-import io from 'socket.io'
+import socket from 'socket.io'
 import mongooseService from './services/mongoose'
 import passportJWT from './services/passport'
+import auth from './middleware/auth'
 import config from './config'
 import User from './model/User.model'
+import Message from './model/Message.model'
+import Channel from './model/Channel.model'
 import Html from '../client/html'
 
 const Root = () => ''
@@ -34,19 +37,6 @@ try {
 mongooseService.connect()
 
 let connections = []
-
-// let channelList = []
-
-let channelList = [
-  {
-    general: {
-      name: 'general',
-      description: 'Chat about general topics',
-      listOfUsers: [],
-      listOfMessages: []
-    }
-  }
-]
 
 const port = process.env.PORT || 8090
 const server = express()
@@ -72,6 +62,10 @@ passport.use('jwt', passportJWT.jwt)
 
 middleware.forEach((it) => server.use(it))
 
+server.get('/api/v1/user-info', auth([]), async (req, res) => {
+  res.json({ status: 'success' })
+})
+
 server.get('/api/v1/auth', async (req, res) => {
   try {
     const jwtUser = jwt.verify(req.cookies.token, config.secret)
@@ -89,18 +83,27 @@ server.get('/api/v1/auth', async (req, res) => {
 })
 
 server.post('/api/v1/auth', async (req, res) => {
-  console.log(req.body)
   try {
     const user = await User.findAndValidateUser(req.body)
 
     const payload = { uid: user.id }
     const token = jwt.sign(payload, config.secret, { expiresIn: '48h' })
-    user.password = undefined // delete doesnot work
-    console.log(user.password)
+    user.password = undefined
     res.cookie('token', token, { maxAge: 1000 * 60 * 60 * 48 })
     res.json({ status: 'ok', token, user })
   } catch (err) {
     console.log(err)
+    res.json({ status: 'error', err })
+  }
+})
+
+server.post('/api/v1/registration', (req, res) => {
+  console.log(req.body)
+  try {
+    const newUser = new User(req.body)
+    newUser.save()
+    res.json({ status: 'ok' })
+  } catch (err) {
     res.json({ status: 'error', err })
   }
 })
@@ -138,33 +141,72 @@ server.get('/*', (req, res) => {
   )
 })
 
+let userList
+
+const getUsers = async () => {
+  userList = await User.find({}, 'full_name role').exec()
+}
+
+getUsers()
+
+let onlineUsers = []
+
 if (config.isSocketsEnabled) {
-  const SocketIO = io(httpServer, {
+  const io = socket(httpServer, {
     path: '/ws'
   })
 
-  SocketIO.on('connection', (socket) => {
+  io.on('connection', async (socket) => {
     connections.push(socket)
-    console.log('a user connected', socket.id)
+    console.log(`a user connected, ${socket.id}`)
 
-    connections.forEach((soc) => {
-      soc.emit('Get-Chat-Data', channelList)
+    connections.forEach(async (soc) => {
+      const channels = await Channel.find({})
+      soc.emit('Get-Chat-Data', channels)
+      soc.emit('Get-Online-Users-Ids', onlineUsers)
     })
 
-    socket.on('Add-Channel', (channel) => {
-      // channelList = [...channel]
-      channelList = channel
-      SocketIO.emit('Get-Channels', channelList)
+    socket.on('login', (userId) => {
+      const isUserIdInArr = onlineUsers.map((item) => item.id).includes(userId)
+
+      if (!!userId && !isUserIdInArr) {
+        onlineUsers = [...new Set([...onlineUsers, { id: userId, socket: socket.id }])]
+        console.log('ssdfds', onlineUsers)
+        io.emit('Get-Online-Users-Ids', onlineUsers)
+      }
     })
 
-    socket.on('Send-Message', (listMsg) => {
-    // channelList = [...listMsg]
-       channelList = listMsg
-      SocketIO.emit('Get-Messages', channelList)
+    socket.on('logout', (userId_logout) => {
+      onlineUsers = onlineUsers.filter((user) => user.id !== userId_logout)
+      io.emit('Get-Online-Users-Ids', onlineUsers)
+      io.emit('logout-process', userId_logout)
     })
+
+    socket.on('Add-Channel', async (channelObj) => {
+      const newChannel = new Channel(channelObj)
+      newChannel.save()
+      const newChannelList = await Channel.find({})
+      io.emit('Get-Channels', newChannelList)
+    })
+
+    socket.on('Remove-Channel', async (channelId) => {
+      await Channel.deleteOne({ _id: channelId })
+      const updatedChannelList = await Channel.find({})
+      io.emit('Get-Updated-Channels', updatedChannelList)
+    })
+
+    socket.on('Send-Message', async ({ newListOfMessages, _id, message }) => {
+      const newMessage = new Message(message)
+      newMessage.save()
+      await Channel.updateOne({ _id }, { $set: { listOfMessages: newListOfMessages } })
+      const newChannelList = await Channel.find({})
+      io.emit('Get-Messages', newChannelList)
+    })
+
+    io.emit('Send-Users', userList)
 
     socket.on('disconnect', () => {
-      connections = connections.filter((c) => c !== socket.id)
+      connections = connections.filter((c) => c.id !== socket.id)
       console.log('a user disconnected', socket.id)
     })
   })

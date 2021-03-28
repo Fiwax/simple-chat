@@ -2,7 +2,6 @@ import { nanoid } from 'nanoid'
 
 const GET_MESSAGE = 'GET_MESSAGE'
 const UPDATE_MESSAGE = 'UPDATE_MESSAGE'
-const SET_NICKNAME = 'SET_NICKNAME'
 
 const InitialState = {
   text: '',
@@ -25,17 +24,9 @@ export default (state = InitialState, action) => {
     case UPDATE_MESSAGE: {
       return { ...state, message: action.message }
     }
-    case SET_NICKNAME: {
-      return {...state, nickname: action.nickname}
-    }
     default:
       return state
   }
-}
-
-
-export function setNickname(nickname) {
-  return { type: SET_NICKNAME, nickname}
 }
 
 export function getMessage(text) {
@@ -47,17 +38,20 @@ export function updateMessage() {
     const store = getState()
     const { text, message } = store.messages
     const { activeChannel } = store.channels
-    const { full_name } = store.auth.user
+    const { full_name, userPic } = store.auth.user
 
     const newMessage = {
       ...message,
       name: full_name,
       Id: nanoid(),
       text,
-      time: `${new Date().getHours()}:${new Date().getMinutes()}`,
+      userPic,
+      time: +new Date(),
       currentChannel: activeChannel,
       meta: {}
     }
+
+    // `${new Date().getHours()}:${new Date().getMinutes()}`
     dispatch({ type: UPDATE_MESSAGE, message: newMessage })
   }
 }
