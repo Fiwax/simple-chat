@@ -15,7 +15,7 @@ import Admin from '../components/admin'
 
 
 import Startup from './startup'
-import Dummy from '../components/dummy'
+import OpeningPage from '../components/openingPage'
 
 
 const OnlyAnonymousRoute = ({ component: Component, ...rest }) => {
@@ -75,12 +75,11 @@ const RootComponent = (props) => {
       <RouterSelector history={history} location={props.location} context={props.context}>
         <Startup>
           <Switch>
-            <Route exact path="/" component={() => <Dummy />} />
+            <Route exact path="/" component={() => <OpeningPage />} />
             <OnlyAnonymousRoute exact path="/registration" component={() => <RegisterPage />} />
             <OnlyAnonymousRoute exact path="/login" component={() => <LoginPage />} />
             <PrivateRoute exact path="/home" component={() => <Home />} />
             <PrivateRoute exact path="/home/admin" component={() => <Admin />} />
-            <PrivateRoute exact path="/private" component={() => <Dummy />} />
             <Route component={() => <NotFound />} />
           </Switch>
         </Startup>
