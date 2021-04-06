@@ -1,6 +1,6 @@
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { addChannel, getChannelName, getDescription } from '../../redux/reducers/channels'
+import { addChannel, getChannelName, getDescription, updateActiveChannel } from '../../redux/reducers/channels'
 
 const AddChannel = (props) => {
   const channelName = useSelector((s) => s.channels.nameOfChannel)
@@ -9,6 +9,7 @@ const AddChannel = (props) => {
 
   const Add = () => {
     dispatch(addChannel())
+    dispatch(updateActiveChannel(channelName))
     props.setActive(!props.active)
     dispatch(getChannelName(''))
     dispatch(getDescription(''))

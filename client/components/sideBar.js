@@ -1,5 +1,4 @@
 import React from 'react'
-import Cookies from 'universal-cookie'
 import { Link } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 
@@ -7,22 +6,15 @@ import DirectMessages from './sidebar/directMessages'
 import Applications from './sidebar/applications'
 import UserList from './sidebar/userList'
 import ChannelList from './sidebar/channelList'
-import { socket } from '../redux'
+import LogoutButton from './sidebar/logoutButton'
 
 const SideBar = () => {
-  const cookie = new Cookies()
-  const { full_name, _id } = useSelector((s) => s.auth.user)
+  const { full_name } = useSelector((s) => s.auth.user)
   const role = useSelector((s) => s.auth?.user?.role || [])
   const isAdmin = role.includes('admin')
 
-  const logOut = () => {
-    cookie.remove('token', { path: '/' })
-    socket.emit('logout', _id)
-    window.location.reload()
-  }
-
   return (
-    <div className="hidden w-1/5 h-screen pb-6 overflow-y-auto bg-gray-800 md:block">
+    <div className="sidebar min-w-max inset-y-0 left-0 transform -translate-x-full md:translate-x-0 absolute md:relative transition duration-200 ease-in-out w-1/5 h-screen pb-6 overflow-y-auto bg-gray-800 md:block">
       <h1 className="flex justify-between px-3 mt-3 mb-2 font-sans text-xl text-white">
         <span>Tailwind CSS</span>
 
@@ -76,13 +68,14 @@ const SideBar = () => {
       {/* Application */}
       <Applications />
 
-      <button
+      {/* <button
         type="button"
         onClick={logOut}
         className="block px-10 py-3 mx-auto text-xs text-white uppercase bg-indigo-800 rounded shadow hover:bg-indigo-700 focus:shadow-outline focus:outline-none"
       >
         Log out
-      </button>
+      </button> */}
+      <LogoutButton />
     </div>
   )
 }

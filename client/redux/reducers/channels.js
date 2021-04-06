@@ -11,17 +11,10 @@ const SEND_MESSAGE = 'SEND_MESSAGE'
 const GET_CHAT_DATA = 'GET_CHAT'
 
 const InitialState = {
-  listOfChannels: [
-    {
-      name: 'general',
-      description: 'Chat about general topics',
-      listOfUsers: [],
-      listOfMessages: []
-    }
-  ],
+  listOfChannels: [],
   descriptionOfChannel: '',
   nameOfChannel: '',
-  activeChannel: 'general',
+  activeChannel: '',
   channelObj: {}
 }
 
@@ -31,7 +24,11 @@ export default (state = InitialState, action) => {
       return { ...state, listOfChannels: action.updateChannel }
     }
     case REMOVE_CHANNEL: {
-      return { ...state, listOfChannels: action.updatedChannelList, activeChannel: action.activeChannel }
+      return {
+        ...state,
+        listOfChannels: action.updatedChannelList,
+        activeChannel: action.activeChannel
+      }
     }
     case GET_CHANNELS: {
       return { ...state, listOfChannels: action.getChannels }
@@ -59,16 +56,6 @@ export default (state = InitialState, action) => {
   }
 }
 
-// export function getChannels() {
-//   return (dispatch) => {
-//     socket.on('Get-Channels', (data) => {
-//       // data.map(channel => channel.name) inside it const item = items[Math.floor(Math.random() * items.length)]; or we can select only first channel name and put it into activeChannels
-//       // activeChannel: currentChannel
-//       dispatch({ type: GET_CHANNELS, getChannels: data })
-//     })
-//   }
-// }
-
 export function getMessages() {
   return (dispatch) => {
     socket.on('Get-Messages', (data) => {
@@ -83,16 +70,6 @@ export function addChannel() {
     const { descriptionOfChannel, nameOfChannel, channelObj } = store.channels
 
     const newDescription = descriptionOfChannel !== '' ? descriptionOfChannel : 'Description'
-    // ARRAY
-    // const newChannel = [
-    //   ...listOfChannels,
-    //   {
-    //     name: nameOfChannel,
-    //     description: newDescription,
-    //     listOfIdsOfUsers: [],
-    //     listOfMessages: []
-    //   }
-    // ]
 
     const newChannel = {
       ...channelObj,
@@ -110,7 +87,6 @@ export function addChannel() {
 }
 
 export function removeChannel(channelId) {
-  console.log('CHANNEL ID I HOPE IT WORKS', channelId)
   return (dispatch, getState) => {
     const store = getState()
     const { activeChannel } = store.channels
@@ -118,8 +94,9 @@ export function removeChannel(channelId) {
     socket.on('Get-Updated-Channels', (newChannelList) => {
       const namesOfChannels = newChannelList.map((channel) => channel.name)
       const firstChannelName = newChannelList[0]?.name
-      const setActiveChannel = namesOfChannels.includes(activeChannel) ? activeChannel : firstChannelName
-      // inside it const item = items[Math.floor(Math.random() * items.length)]
+      const setActiveChannel = namesOfChannels.includes(activeChannel)
+        ? activeChannel
+        : firstChannelName
       dispatch({
         type: REMOVE_CHANNEL,
         updatedChannelList: newChannelList,
@@ -149,13 +126,10 @@ export function sendMessage() {
     const { message } = store.messages
 
     const foundChannel = listOfChannels.find((channel) => channel?.name === activeChannel)
-    // probably i should send newListOfMessages to the server and usd a command called Channel.updateOne({ name: activeChannel }, { $set listOfMessage: newListOfMessages})
-    // then i will find all channel documents and send it from the server to the client
+
     const newListOfMessages = [...foundChannel.listOfMessages, message]
     const { _id } = foundChannel
-    // const updatedListOfChannels = listOfChannels.map((obj) =>
-    //   obj?.name === activeChannel ? { ...obj, listOfMessages: newListOfMessages } : obj
-    // )
+
     socket.emit('Send-Message', { newListOfMessages, _id, message })
     socket.on('Get-Channels', (newChannelList) => {
       dispatch({ type: SEND_MESSAGE, listOfMessages: newChannelList })
@@ -166,8 +140,8 @@ export function sendMessage() {
 export function getChannels() {
   return (dispatch) => {
     socket.on('Get-Chat-Data', (newChannelList) => {
-      const setActiveChannel =  newChannelList.map((it) => it.name)[0]
-      dispatch({ type: GET_CHAT_DATA, data: newChannelList, activeChannel:  setActiveChannel})
+      const setActiveChannel = newChannelList.map((it) => it.name)[0]
+      dispatch({ type: GET_CHAT_DATA, data: newChannelList, activeChannel: setActiveChannel })
     })
   }
 }

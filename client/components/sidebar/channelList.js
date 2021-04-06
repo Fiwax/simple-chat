@@ -10,8 +10,6 @@ const ChannelList = () => {
   const role = useSelector((s) => s.auth.user?.role || [])
   const isAdmin = role.includes('admin')
 
-  const MIN_LENGTH_CHANNEL_LIST = listOfChannels.length !== 1
-
   const [active, setActive] = useState(false)
 
   return (
@@ -37,9 +35,9 @@ const ChannelList = () => {
       </div>
 
       <div className="mb-2 py-1 px-3.5 text-white w-full ">
-        {listOfChannels.map((channel, index) => {
+        {listOfChannels.map((channel) => {
           return (
-            <div key={`${channel.name}${index}`} className="flex justify-between">
+            <div key={channel._id} className="flex justify-between">
               <button
                 type="button"
                 className={`flex flex-col  font-semibold  rounded mt-1 duration-500 flex-grow w-full px-1 h-7 ${
@@ -51,7 +49,7 @@ const ChannelList = () => {
               >
                 # {channel.name}
               </button>
-              {MIN_LENGTH_CHANNEL_LIST && isAdmin && (
+              {isAdmin && (
                 <button
                   type="button"
                   className="items-center rounded-full p-1 ml-1.5 hover:bg-gray-500 duration-700"

@@ -3,11 +3,7 @@ import React from 'react'
 const MessageBlock = ({ message }) => {
   const HumanReadableTime = (unix) => {
     const date = new Date(unix)
-    const lengthDate = `${date.getHours()}:${date.getMinutes()}`.length
-    const MIN_LENGTH_TIME = 5
-
-    if (lengthDate === MIN_LENGTH_TIME) return `${date.getHours()}:${date.getMinutes()}`
-    return `${date.getHours()}:${date.getMinutes()}0`
+    return date.toLocaleString()
   }
 
   return (

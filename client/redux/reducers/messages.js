@@ -8,14 +8,6 @@ const InitialState = {
   message: {}
 }
 
-// {
-//             full_name: 'Alex',
-//             mesageId: 'jsfjj1232',
-//             text: 'Hello World',
-//             time: new Date(),
-//             meta: {}
-//           }
-
 export default (state = InitialState, action) => {
   switch (action.type) {
     case GET_MESSAGE: {
@@ -51,7 +43,6 @@ export function updateMessage() {
       meta: {}
     }
 
-    // `${new Date().getHours()}:${new Date().getMinutes()}`
     dispatch({ type: UPDATE_MESSAGE, message: newMessage })
   }
 }
