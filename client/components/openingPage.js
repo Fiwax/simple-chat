@@ -18,7 +18,7 @@ const OpeningPage = () => {
         </Link>
       </div>
       <div className="flex items-center justify-center h-screen ">
-        <div className="p-10 bg-white h-64 w-64 rounded-full shadow-2xl bg-white rounded-lg shadow-lg">
+        <div className="p-10 bg-white md:h-64 md:w-64 w-48 h-48 rounded-full shadow-2xl bg-white rounded-lg shadow-lg">
           {/* grid */}
           <div className="grid grid-cols-4 grid-rows-4 gap-2 w-full h-full">
             {/* blues */}
