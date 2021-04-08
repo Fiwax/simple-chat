@@ -6,7 +6,7 @@ const OpeningPage = () => {
   return (
     <div>
       <Head title="Hello" />
-      <div className="flex bg-gray-800 items-center rounded-b p-4 uppercase text-white font-medium justify-between">
+      <div className="flex bg-gray-800 items-center rounded-b p-5 uppercase text-white font-medium justify-between">
         <Link
           className="px-2 text-gray-300 hover:text-white transition duration-200"
           to="/registration"

@@ -94,9 +94,15 @@ export function removeChannel(channelId) {
     socket.on('Get-Updated-Channels', (newChannelList) => {
       const namesOfChannels = newChannelList.map((channel) => channel.name)
       const firstChannelName = newChannelList[0]?.name
-      const setActiveChannel = namesOfChannels.includes(activeChannel)
-        ? activeChannel
-        : firstChannelName
+      let setActiveChannel
+
+      if (namesOfChannels.includes(activeChannel)) {
+        setActiveChannel = activeChannel
+      } else if (!namesOfChannels.length) {
+        setActiveChannel = ''
+      } else {
+        setActiveChannel = firstChannelName
+      }
       dispatch({
         type: REMOVE_CHANNEL,
         updatedChannelList: newChannelList,

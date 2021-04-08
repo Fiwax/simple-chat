@@ -171,7 +171,6 @@ if (config.isSocketsEnabled) {
 
       if (!!userId && !isUserIdInArr) {
         onlineUsers = [...new Set([...onlineUsers, { id: userId, socket: socket.id }])]
-        console.log('ssdfds', onlineUsers)
         io.emit('Get-Online-Users-Ids', onlineUsers)
       }
     })
