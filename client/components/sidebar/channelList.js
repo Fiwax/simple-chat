@@ -1,16 +1,15 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { updateActiveChannel, removeChannel } from '../../redux/reducers/channels'
-import AddChannel from './addChannel'
+import { updateActiveChannel, removeChannel, updateAddChannelToggle } from '../../redux/reducers/channels'
 
 const ChannelList = () => {
   const dispatch = useDispatch()
 
+  const addChannelToggle = useSelector((s) => s.channels.addChannelToggle)
   const { listOfChannels, activeChannel } = useSelector((s) => s.channels)
   const role = useSelector((s) => s.auth.user?.role || [])
   const isAdmin = role.includes('admin')
 
-  const [active, setActive] = useState(false)
 
   return (
     <div>
@@ -20,10 +19,10 @@ const ChannelList = () => {
           <button
             type="button"
             className="rounded-full mr-0.5 focus:outline-none"
-            onClick={() => setActive(!active)}
+            onClick={() => dispatch(updateAddChannelToggle(!addChannelToggle))}
           >
             <svg
-              className="w-4 h-4 opacity-50 fill-current"
+              className="w-4 h-4 opacity-50 fill-current transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110"
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 20 20"
             >
@@ -31,7 +30,6 @@ const ChannelList = () => {
             </svg>
           </button>
         )}
-        {active && <AddChannel active={active} setActive={setActive} />}
       </div>
 
       <div className="mb-2 py-1 px-3.5 text-white w-full ">

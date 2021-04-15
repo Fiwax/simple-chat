@@ -11,8 +11,10 @@ import Head from './head'
 import NoMessage from './home/noMessage'
 
 import { getMessages, getChannels, removeChannel } from '../redux/reducers/channels'
+import AddChannel from './sidebar/addChannel'
 
 const Home = () => {
+  const addChannelToggle = useSelector((s) => s.channels.addChannelToggle)
   const { listOfChannels, activeChannel } = useSelector((s) => s.channels)
   const userId = useSelector((s) => s.auth.user._id)
   const foundChannel = listOfChannels.find((obj) => obj.name === activeChannel)
@@ -44,9 +46,12 @@ const Home = () => {
   return (
     <div>
       <Head />
-      <div className="w-full bg-white flex relative">
+      <div className="w-full bg-white flex ">
         {/* <!-- Sidebar / channel list --> */}
         <SideBar />
+
+        {/* Add channel  */}
+        {addChannelToggle && <AddChannel />}
 
         {/* <!-- Chat content --> */}
         <div className="flex flex-col w-full h-screen">
@@ -57,7 +62,7 @@ const Home = () => {
           <div className="flex-1 px-6 py-4 overflow-y-auto">
             {/* <!-- A message --> */}
 
-            {listOfMessages?.length === 0 ? (
+            {!listOfMessages?.length ? (
               <NoMessage />
             ) : (
               listOfMessages?.map((message) => {

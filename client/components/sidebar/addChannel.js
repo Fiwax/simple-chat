@@ -1,22 +1,31 @@
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { addChannel, getChannelName, getDescription, updateActiveChannel } from '../../redux/reducers/channels'
+import {
+  addChannel,
+  getChannelName,
+  getDescription,
+  updateActiveChannel,
+  updateAddChannelToggle
+} from '../../redux/reducers/channels'
 
-const AddChannel = (props) => {
+const AddChannel = () => {
   const channelName = useSelector((s) => s.channels.nameOfChannel)
   const description = useSelector((s) => s.channels.descriptionOfChannel)
+  const addChannelToggle = useSelector((s) => s.channels.addChannelToggle)
   const dispatch = useDispatch()
 
   const Add = () => {
-    dispatch(addChannel())
-    dispatch(updateActiveChannel(channelName))
-    props.setActive(!props.active)
-    dispatch(getChannelName(''))
-    dispatch(getDescription(''))
+    if (channelName.length) {
+      dispatch(addChannel())
+      dispatch(updateActiveChannel(channelName))
+      dispatch(updateAddChannelToggle(!addChannelToggle))
+      dispatch(getChannelName(''))
+      dispatch(getDescription(''))
+    }
   }
 
   const Cancel = () => {
-    props.setActive(!props.active)
+    dispatch(updateAddChannelToggle(!addChannelToggle))
     dispatch(getChannelName(''))
     dispatch(getDescription(''))
   }

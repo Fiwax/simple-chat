@@ -9,13 +9,15 @@ const GET_CHANNEL_NAME = 'GET_CHANNEL_NAME'
 const UPDATE_ACTIVE_CHANNEL = 'UPDATE_ACTIVE_CHANNEL'
 const SEND_MESSAGE = 'SEND_MESSAGE'
 const GET_CHAT_DATA = 'GET_CHAT'
+const UPDATE_ADDCHANNEL_TOGGLE = 'UPDATE_ADDCHANNEL_TOGGLE'
 
 const InitialState = {
   listOfChannels: [],
   descriptionOfChannel: '',
   nameOfChannel: '',
   activeChannel: '',
-  channelObj: {}
+  channelObj: {},
+  addChannelToggle: false
 }
 
 export default (state = InitialState, action) => {
@@ -50,6 +52,9 @@ export default (state = InitialState, action) => {
     }
     case GET_CHAT_DATA: {
       return { ...state, listOfChannels: action.data, activeChannel: action.activeChannel }
+    }
+    case UPDATE_ADDCHANNEL_TOGGLE: {
+      return { ...state, addChannelToggle: action.toggle }
     }
     default:
       return state
@@ -150,4 +155,8 @@ export function getChannels() {
       dispatch({ type: GET_CHAT_DATA, data: newChannelList, activeChannel: setActiveChannel })
     })
   }
+}
+
+export function updateAddChannelToggle(toggle) {
+  return { type: UPDATE_ADDCHANNEL_TOGGLE, toggle }
 }
