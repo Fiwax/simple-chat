@@ -10,6 +10,7 @@ const UPDATE_ACTIVE_CHANNEL = 'UPDATE_ACTIVE_CHANNEL'
 const SEND_MESSAGE = 'SEND_MESSAGE'
 const GET_CHAT_DATA = 'GET_CHAT'
 const UPDATE_ADDCHANNEL_TOGGLE = 'UPDATE_ADDCHANNEL_TOGGLE'
+const UPDATE_USERLIST = 'UPDATE_USERLIST'
 
 const InitialState = {
   listOfChannels: [],
@@ -55,6 +56,9 @@ export default (state = InitialState, action) => {
     }
     case UPDATE_ADDCHANNEL_TOGGLE: {
       return { ...state, addChannelToggle: action.toggle }
+    }
+    case UPDATE_USERLIST: {
+      return { ...state, listOfChannels: action.newUserList }
     }
     default:
       return state
@@ -159,4 +163,26 @@ export function getChannels() {
 
 export function updateAddChannelToggle(toggle) {
   return { type: UPDATE_ADDCHANNEL_TOGGLE, toggle }
+}
+
+export function checkUserInChannel() {
+  return (dispatch, getState) => {
+    const store = getState()
+
+    const { _id } = store.auth.user
+    const { activeChannel, listOfChannels } = store.channels
+
+    const foundChannel = listOfChannels.find((el) => el.name === activeChannel)
+    const { listOfUsers } = foundChannel
+
+    if (!listOfUsers.includes(_id) && !!_id) {
+      const newUserList = [...listOfUsers, _id]
+      console.log('newUs', newUserList, foundChannel)
+      socket.emit('Update-UserList', { newUserList, activeChannel })
+      socket.on('New-Updated-UserList', (newUpdatedlist) => {
+        dispatch({ type: UPDATE_USERLIST, newUserList: newUpdatedlist })
+        console.log('llala', newUpdatedlist)
+      })
+    }
+  }
 }

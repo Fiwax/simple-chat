@@ -202,6 +202,14 @@ if (config.isSocketsEnabled) {
       io.emit('Get-Messages', newChannelList)
     })
 
+    socket.on('Update-UserList', async ({ newUserList, activeChannel }) => {
+      await Channel.updateOne({ name: activeChannel }, { $set: { listOfUsers: newUserList} })
+      const newUpdatedlist = await Channel.find({})
+      io.emit('New-Updated-UserList', newUpdatedlist)
+      console.log(newUserList, activeChannel, newUpdatedlist)
+      console.log('activeChanne', activeChannel)
+    })
+
     io.emit('Send-Users', userList)
 
     socket.on('disconnect', () => {
