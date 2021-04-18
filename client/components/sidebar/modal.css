@@ -1,0 +1,11 @@
+#modal-window {
+  top:-400px;
+  transform-origin: 10px 10px;
+  animation: drop 0.5s ease forwards;
+}
+
+@keyframes drop{
+  0%{opacity: 0}
+  70%{ transform: translateY(-250px);}
+  100%{ transform: translateY((-350px)); opacity: 1;}
+}

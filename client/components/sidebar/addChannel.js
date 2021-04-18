@@ -1,5 +1,6 @@
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import './modal.css'
 import {
   addChannel,
   getChannelName,
@@ -37,8 +38,11 @@ const AddChannel = () => {
   }
 
   return (
-    <div className="fixed top-0 left-0 flex items-center justify-center w-screen h-screen bg-black bg-opacity-75 modal">
-      <div className="flex flex-col items-center justify-center h-40 text-black bg-white rounded modal__content w-80">
+    <div className="fixed top-0 left-0 flex items-center justify-center w-full h-full bg-black bg-opacity-90 modal">
+      <div
+        id="modal-window"
+        className="flex flex-col items-center justify-center h-40 text-black bg-white rounded modal__content w-80"
+      >
         <span className="text-lg text-gray-400 hover:text-gray-500">Add channel</span>
         <div className="">
           <input
