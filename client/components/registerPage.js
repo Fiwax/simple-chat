@@ -2,6 +2,7 @@ import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 import Head from './head'
+import CookiesBanner from './cookiesBanner'
 import { emailField, nameField, passwordField, tryRegisterUser } from '../redux/reducers/registration'
 
 const RegisterPage = () => {
@@ -107,6 +108,7 @@ const RegisterPage = () => {
           </div>
         </div>
       </div>
+      <CookiesBanner />
     </div>
   )
 }

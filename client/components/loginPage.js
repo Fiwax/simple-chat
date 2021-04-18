@@ -2,6 +2,7 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import Head from './head'
+import CookiesBanner from './cookiesBanner'
 import { updatePassword, updateLogin, signIn } from '../redux/reducers/auth'
 
 const LoginPage = () => {
@@ -77,6 +78,7 @@ const LoginPage = () => {
           </div>
         </div>
       </div>
+      <CookiesBanner />
     </div>
   )
 }

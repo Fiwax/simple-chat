@@ -1,6 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import Head from './head'
+import CookiesBanner from './cookiesBanner'
 
 const OpeningPage = () => {
   return (
@@ -36,6 +37,7 @@ const OpeningPage = () => {
           </div>
         </div>
       </div>
+      <CookiesBanner />
     </div>
   )
 }
