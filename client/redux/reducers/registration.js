@@ -60,8 +60,6 @@ export function tryRegisterUser() {
     })
       .then((r) => r.json())
       .then((data) => {
-        console.log('data status', data)
-        console.log('data status', data.status)
         dispatch({ type: REGISTER, status: data.status })
         history.push('/login')
       })

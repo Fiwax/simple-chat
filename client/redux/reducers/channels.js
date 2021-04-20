@@ -169,19 +169,17 @@ export function checkUserInChannel() {
   return (dispatch, getState) => {
     const store = getState()
 
-    const { _id } = store.auth.user
+    const userId = store?.auth?.user?._id
     const { activeChannel, listOfChannels } = store.channels
 
     const foundChannel = listOfChannels.find((el) => el.name === activeChannel)
-    const { listOfUsers } = foundChannel
+    const listOfUsers = foundChannel?.listOfUsers
 
-    if (!listOfUsers.includes(_id) && !!_id) {
-      const newUserList = [...listOfUsers, _id]
-      console.log('newUs', newUserList, foundChannel)
+    if (!!userId && typeof listOfUsers !== 'undefined' && !listOfUsers.includes(userId)) {
+      const newUserList = [...listOfUsers, userId]
       socket.emit('Update-UserList', { newUserList, activeChannel })
       socket.on('New-Updated-UserList', (newUpdatedlist) => {
         dispatch({ type: UPDATE_USERLIST, newUserList: newUpdatedlist })
-        console.log('llala', newUpdatedlist)
       })
     }
   }

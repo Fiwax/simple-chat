@@ -92,13 +92,11 @@ server.post('/api/v1/auth', async (req, res) => {
     res.cookie('token', token, { maxAge: 1000 * 60 * 60 * 48 })
     res.json({ status: 'ok', token, user })
   } catch (err) {
-    console.log(err)
     res.json({ status: 'error', err })
   }
 })
 
 server.post('/api/v1/registration', (req, res) => {
-  console.log(req.body)
   try {
     const newUser = new User(req.body)
     newUser.save()
@@ -206,8 +204,6 @@ if (config.isSocketsEnabled) {
       await Channel.updateOne({ name: activeChannel }, { $set: { listOfUsers: newUserList} })
       const newUpdatedlist = await Channel.find({})
       io.emit('New-Updated-UserList', newUpdatedlist)
-      console.log(newUserList, activeChannel, newUpdatedlist)
-      console.log('activeChanne', activeChannel)
     })
 
     io.emit('Send-Users', userList)

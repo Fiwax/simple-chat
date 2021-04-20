@@ -1,6 +1,11 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { updateActiveChannel, removeChannel, updateAddChannelToggle, checkUserInChannel } from '../../redux/reducers/channels'
+import {
+  updateActiveChannel,
+  removeChannel,
+  updateAddChannelToggle,
+  checkUserInChannel
+} from '../../redux/reducers/channels'
 
 const ChannelList = () => {
   const dispatch = useDispatch()
@@ -10,10 +15,9 @@ const ChannelList = () => {
   const role = useSelector((s) => s.auth.user?.role || [])
   const isAdmin = role.includes('admin')
 
-  const handleOnClick = (channelName) => {
-     dispatch(updateActiveChannel(channelName))
-     dispatch(checkUserInChannel())
-  }
+  useEffect(() => {
+    dispatch(checkUserInChannel())
+  }, [activeChannel])
 
   return (
     <div>
@@ -47,7 +51,7 @@ const ChannelList = () => {
                     ? 'bg-gray-600'
                     : 'bg-transparent hover:bg-gray-700'
                 }`}
-                onClick={() => handleOnClick(channel.name)}
+                onClick={() => dispatch(updateActiveChannel(channel.name))}
               >
                 # {channel.name}
               </button>

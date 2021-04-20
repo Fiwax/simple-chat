@@ -8,7 +8,6 @@ const Header = () => {
   const listOfUsers = foundChannel?.listOfUsers
   const descriptionOfChannel = foundChannel?.description
   const nameOfChannel = foundChannel?.name || ''
-  console.log('list', listOfUsers)
 
   return (
     <div className="flex items-center justify-between px-6 py-2 border-b shadow rounded-b-md">
