@@ -1,26 +1,20 @@
 import React, { useEffect } from 'react'
+import Cookies from 'universal-cookie'
 
 const CookiesBanner = () => {
-  // useEffect(() => {
-  //   const cookiesBtn = document.querySelector('.cookie-btn')
-  //   const cookieBanner = document.querySelector('.cookie-container')
-  //   cookiesBtn.addEventListener('click', () => {
-  //     cookieBanner.classList.toggle('hidden')
-  //     localStorage.setItem('cookieBannerHidden', 'true')
-  //   })
-
+  const cookies = new Cookies()
   useEffect(() => {
     const cookiesBtn = document.querySelector('.cookie-btn')
     const cookieBanner = document.querySelector('.cookie-container')
     cookiesBtn.addEventListener('click', () => {
-      localStorage.setItem('cookieBannerHidden', 'true')
+      cookies.set('cookieBannerHidden', 'true', { path: '/', maxAge: 1000 * 48 * 10 })
       cookieBanner.classList.toggle('hidden')
     })
   }, [])
 
   useEffect(() => {
     const cookieBanner = document.querySelector('.cookie-container')
-    if (!localStorage.getItem('cookieBannerHidden'))
+    if (!cookies.get('cookieBannerHidden'))
       setTimeout(() => {
         cookieBanner.classList.remove('hidden')
       }, 500)

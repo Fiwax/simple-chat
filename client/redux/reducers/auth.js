@@ -9,7 +9,7 @@ const cookies = new Cookies()
 const initialState = {
   email: '',
   password: '',
-  token: cookies.get('token'), // cookies.get('token')
+  token: cookies.get('token'), 
   user: {}
 }
 
