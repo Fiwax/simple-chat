@@ -46,7 +46,7 @@ const Home = () => {
   return (
     <div>
       <Head />
-      <div className="w-full bg-white flex ">
+      <div className="w-full bg-white flex relative">
         {/* <!-- Sidebar / channel list --> */}
         <SideBar />
 

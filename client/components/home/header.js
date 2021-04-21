@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useSelector } from 'react-redux'
 
 const Header = () => {
@@ -8,6 +8,14 @@ const Header = () => {
   const listOfUsers = foundChannel?.listOfUsers
   const descriptionOfChannel = foundChannel?.description
   const nameOfChannel = foundChannel?.name || ''
+
+  useEffect(() => {
+    const sidebar = document.querySelector('.sidebar')
+    const mobileMenu = document.querySelector('.mobile-menu-button')
+    mobileMenu.addEventListener('click', () => {
+      sidebar.classList.toggle('-translate-x-full')
+    })
+  },[])
 
   return (
     <div className="flex items-center justify-between px-6 py-2 border-b shadow rounded-b-md">

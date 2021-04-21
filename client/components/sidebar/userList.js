@@ -9,15 +9,15 @@ const UserList = () => {
   const onlineUsers = listOfUsers.filter((user) => onlineUsersId.indexOf(user._id) !== -1)
   const offlineUsers = listOfUsers.filter((user) => onlineUsersId.indexOf(user._id) === -1)
 
-  const dispatch = useDispatch()
+    const dispatch = useDispatch()
 
-  useEffect(() => {
-    dispatch(getUserList())
-  }, [dispatch])
+    useEffect(() => {
+      dispatch(getUserList())
+    }, [dispatch])
 
-  useEffect(() => {
-    dispatch(getOnlineUsers())
-  }, [dispatch])
+    useEffect(() => {
+      dispatch(getOnlineUsers())
+    }, [dispatch])
 
   return (
     <div>
