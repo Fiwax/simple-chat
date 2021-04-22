@@ -13,6 +13,14 @@ const Admin = () => {
     dispatch(getOnlineUsers())
   }, [])
 
+  useEffect(() => {
+   const adminSidebar = document.querySelector('.admin-sidebar')
+   const adminMobileBtn = document.querySelector('#admin-mobileMenu')
+   adminMobileBtn.addEventListener('click', () => {
+     adminSidebar.classList.toggle('-translate-x-full')
+   })
+  },[])
+
   const listOfUsers = useSelector((s) => s.users.userList)
   const listOfUsersNoAdmin = listOfUsers.filter((user) => !user.role.includes('admin'))
   const onlineSocket_UserId = useSelector((s) => s.users.online)
@@ -23,11 +31,29 @@ const Admin = () => {
     <div>
       <Head title="Admin Page" />
 
-      <div className="flex w-full">
+      <div className="flex w-full relative">
         <AdminSidebar />
 
-        <span className="flex flex-col w-full h-screen pt-32 text-white bg-gray-700">
-          <span className="flex justify-center mb-10 font-bold tracking-wider text-gray-300 uppercase">
+        <span className="flex flex-col w-full h-screen  text-white bg-gray-700">
+          <div className="flex justify-end p-6 md:hidden">
+            <button type="button" id="admin-mobileMenu">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4 6h16M4 12h16M4 18h16"
+                />
+              </svg>
+            </button>
+          </div>
+          <span className="flex justify-center mb-10 md:pt-20 font-bold tracking-wider text-gray-300 uppercase">
             {onlineUsers.length !== 0 ? <span>Online users</span> : <span>No users online</span>}
           </span>
           {onlineUsers.map((user) => {

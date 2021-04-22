@@ -49,7 +49,7 @@ const SideBar = () => {
         </div>
         {isAdmin && (
           <Link to="/home/admin">
-            <span className="flex w-5 h-5 text-white cursor-pointer ">
+            <span className="flex w-5 h-5 text-white cursor-pointer">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
