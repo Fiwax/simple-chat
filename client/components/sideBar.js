@@ -22,7 +22,7 @@ const SideBar = () => {
   }, [])
 
   return (
-    <div className="sidebar min-w-max inset-y-0 left-0 transform -translate-x-full md:translate-x-0 absolute md:relative transition duration-200 ease-in-out w-1/5 h-screen pb-6 overflow-y-auto bg-gray-800 md:block">
+    <div className="sidebar min-w-max inset-y-0 left-0 transform -translate-x-full md:translate-x-0 absolute md:relative transition duration-200 ease-in-out w-2/4 h-screen pb-6 overflow-y-auto bg-gray-800 md:block">
       <h1 className="flex justify-start px-3 mt-3 mb-2 font-sans text-xl text-white">
         <span>Tailwind CSS</span>
         <button id="sidebar-menu-button" type="button">

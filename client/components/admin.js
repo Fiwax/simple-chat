@@ -14,12 +14,12 @@ const Admin = () => {
   }, [])
 
   useEffect(() => {
-   const adminSidebar = document.querySelector('.admin-sidebar')
-   const adminMobileBtn = document.querySelector('#admin-mobileMenu')
-   adminMobileBtn.addEventListener('click', () => {
-     adminSidebar.classList.toggle('-translate-x-full')
-   })
-  },[])
+    const adminSidebar = document.querySelector('.admin-sidebar')
+    const adminMobileBtn = document.querySelector('#admin-mobileMenu')
+    adminMobileBtn.addEventListener('click', () => {
+      adminSidebar.classList.toggle('-translate-x-full')
+    })
+  }, [])
 
   const listOfUsers = useSelector((s) => s.users.userList)
   const listOfUsersNoAdmin = listOfUsers.filter((user) => !user.role.includes('admin'))
